@@ -1,7 +1,32 @@
 ./autogen.sh
 ./configure
 make
-sudo make install
-sudo ldconfig
-man ngcli
-ngcli
+
+./cli/src/ngcli -i eth0 -m 28:c6:8e:fb:22:ca -p password
+
+> vlan mode set 4
+> vlan pvid set 5 100
+
+> vlan 802.1q set 100 all untagged
+
+> vlan 802.1q show
+Ports configuration:
+VLAN    1       2       3       4       5
+1       U       U       U       U       U
+100     U       U       U       U       U
+
+> vlan 802.1q set 100 5 tagged
+
+> vlan 802.1q show
+Ports configuration:
+VLAN    1       2       3       4       5
+1       U       U       U       U       U
+100     U       U       U       U       T
+
+> vlan 802.1q set 1 5 no
+
+> vlan 802.1q show
+Ports configuration:
+VLAN    1       2       3       4       5
+1       U       U       U       U
+100     U       U       U       U       T
