@@ -4,25 +4,22 @@ make
 
 ./cli/src/ngcli -i eth0 -m 28:c6:8e:fb:22:ca -p password
 
+# put vlan mode advanced
 > vlan mode set 4
+
+# use vlan 100 as default VLAN on freeplayer port
 > vlan pvid set 5 100
 
-> vlan 802.1q set 100 all untagged
+# set 100 as tagged to all
+> vlan 802.1q set 100 all tagged
 
 > vlan 802.1q show
 Ports configuration:
 VLAN    1       2       3       4       5
 1       U       U       U       U       U
-100     U       U       U       U       U
+100     T       T       T       T       T
 
-> vlan 802.1q set 100 5 tagged
-
-> vlan 802.1q show
-Ports configuration:
-VLAN    1       2       3       4       5
-1       U       U       U       U       U
-100     U       U       U       U       T
-
+# remove VLAN 1 on freeplayer port
 > vlan 802.1q set 1 5 no
 
 > vlan 802.1q show
@@ -30,3 +27,18 @@ Ports configuration:
 VLAN    1       2       3       4       5
 1       U       U       U       U
 100     U       U       U       U       T
+
+make sure all ports up to the freebox are tagged on VLAN 100
+
+# Mikrotik config
+
+- add virtual interfaces on VLAN 100
+/interface vlan add interface=ether1 name=vlan100.1 vlan-id=100
+/interface vlan add interface=ether2 name=vlan100.2 vlan-id=100
+
+- create new bridge
+/interface bridge add name="bridge vlan100"
+
+- assign virtual interfaces to the new bridge
+/interface bridge port add bridge="bridge vlan100" interface=vlan100.1
+/interface bridge port add bridge="bridge vlan100" interface=vlan100.2
